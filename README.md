@@ -122,6 +122,7 @@ Request Body:<br>
   "name": "string",<br>
   "summary": "string",<br>
   "submission_file": "string",<br>
+  "submission_image":"string",<br>
   "submission_link": "string",<br>
   "hackathon": 0<br>
 }<br>
@@ -131,6 +132,7 @@ Response:<br>
   "name": "string",<br>
   "summary": "string",<br>
   "submission_file": "string",<br>
+  "submission_image":"string",<br>
   "submission_link": "string",<br>
   "hackathon": 0<br>
 }<br>
@@ -148,6 +150,7 @@ Response:<br>
   "name": "string",<br>
   "summary": "string",<br>
   "submission_file": "string",<br>
+  "submission_image":"string",<br>
   "submission_link": "string",<br>
   "hackathon": 0<br>
 }<br>

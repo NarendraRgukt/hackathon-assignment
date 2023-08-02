@@ -1,0 +1,4 @@
+Django==4.2.3
+django-restframework==0.0.1
+drf-spectacular==0.26.4
+Pillow==10.0.0

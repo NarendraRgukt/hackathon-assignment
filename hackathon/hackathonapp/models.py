@@ -38,8 +38,9 @@ class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)    #CASCADE-if user object deletes this object will also be deleted
     name = models.CharField(max_length=200)
     summary = models.TextField()
-    submission_file = models.FileField(upload_to='submissions/', blank=True, null=True)
-    submission_link = models.URLField(blank=True)
+    submission_file = models.FileField(upload_to='submissions/file', blank=True, null=True)#depending upon the type of submission user can store the data of submission
+    submission_image=models.ImageField(upload_to='submissions/images',blank=True,null=True)
+    submission_link = models.URLField(blank=True,null=True)
 
     def __str__(self):
         return f"{self.name} - {self.hackathon.title}"

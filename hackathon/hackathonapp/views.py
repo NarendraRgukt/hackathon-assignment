@@ -5,7 +5,9 @@ from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework.serializers import ValidationError
+from django.core.files.uploadedfile import UploadedFile
+from django.core import validators
 
 class HackathonCreateAPI(CreateAPIView):
     '''creating hackathon view'''
@@ -34,27 +36,47 @@ class HackathonListAPI(GenericAPIView):
 
 
 class SubmissionHackathonAPI(CreateAPIView):
-    '''creating the new submission'''
-    serializer_class=serializers.SubmissionSerializer
-    permission_classes=[permissions.IsAuthenticated,]   #user needs to be authenticated for submissioncreate
-    authentication_classes=[authentication.TokenAuthentication]
+    '''creating a new submission'''
+    serializer_class = serializers.SubmissionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [authentication.TokenAuthentication,]
 
-    def post(self,request,*args,**kwargs):
-        '''overriding the post method'''
-
-        serializer=self.get_serializer(data=request.data)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        registerquery=models.Submission.objects.filter(hackathon=serializer.validated_data['hackathon'],user=request.user)
-        if registerquery.exists():#checking wheter the user submitted to the hackathon or not
-            return Response({'error':'already submitted  to this hackathon'},status=status.HTTP_400_BAD_REQUEST)
-        else:# if not submitted previously creating new submission
-            self.perform_create(serializer)
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
 
-    def perform_create(self,serializer):
-        '''overriding the create method i.e user field will be requested user'''
-        return serializer.save(user=self.request.user)
-    
+        user = self.request.user
+        hackathon = serializer.validated_data['hackathon']
+
+        # Check if the user has already submitted to this hackathon
+        if models.Submission.objects.filter(hackathon=hackathon, user=user).exists():
+            return Response({'error': 'You have already submitted to this hackathon.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Determine the submission type based on the provided fields
+        submission_type = None
+        #checking for when the user submits both fields i.e submission_file and submission_link
+        if serializer.validated_data.get('submission_file') is not None and serializer.validated_data.get('submission_link') is not None:
+            return Response({'error': f'You are uploading both formats. This hackathon allows only {hackathon.submission_type} formats.'}, status=status.HTTP_400_BAD_REQUEST)
+        elif 'submission_file' in serializer.validated_data:
+            submission_type = 'file'
+        elif 'submission_link' in serializer.validated_data:
+            submission_type = 'link'
+
+        # Validate submission type based on hackathon's allowed types
+        if submission_type:
+            if submission_type == 'file' and hackathon.submission_type != 'file':
+                return Response({'error': 'This hackathon only allows url submissions.'}, status=status.HTTP_400_BAD_REQUEST)
+            elif submission_type == 'link' and hackathon.submission_type != 'link':
+                return Response({'error': 'This hackathon only allows file submissions.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+        # Create a new submission
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        
 
 class SubmissionListRetrieve(GenericAPIView):
     '''retrieving all the submissions done by the user '''

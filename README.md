@@ -117,12 +117,12 @@ STATUS:200_OK<br>
 <h1>POST-http://127.0.0.1:8000/hackathon-submission/create</h1><br>
 It is used to create new submission related to the hackathon<br>
 In the header add the field of  authorization:Token yourtoken<br>
+<h4>Depending upon the type of submitting choice of hackathon we use submission_file for image,file and submission_link for the link </h4><br>
 Request Body:<br>
 {<br>
   "name": "string",<br>
   "summary": "string",<br>
   "submission_file": "string",<br>
-  "submission_image":"string",<br>
   "submission_link": "string",<br>
   "hackathon": 0<br>
 }<br>
@@ -132,7 +132,6 @@ Response:<br>
   "name": "string",<br>
   "summary": "string",<br>
   "submission_file": "string",<br>
-  "submission_image":"string",<br>
   "submission_link": "string",<br>
   "hackathon": 0<br>
 }<br>

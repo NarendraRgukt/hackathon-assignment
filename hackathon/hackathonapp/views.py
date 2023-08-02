@@ -51,7 +51,7 @@ class SubmissionHackathonAPI(CreateAPIView):
         #checking whether the user registered to the hackathon or not
         qs=models.Registration.objects.filter(user=request.user,hackathon=hackathon)
         if not qs.exists():
-            return Response({'error':'please register for this hackatho'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error':'please register for this hackathon'},status=status.HTTP_400_BAD_REQUEST)
 
 
         # Check if the user has already submitted to this hackathon

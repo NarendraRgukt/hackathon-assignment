@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self,validated_data):
+        '''validating the data while creating the user'''
         email=validated_data['email']
         password=validated_data['password']
         user=authenticate(request=self.context.get('request'),email=email,password=password)
